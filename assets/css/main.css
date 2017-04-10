@@ -3914,3 +3914,15 @@
 			opacity: 1;
 			visibility: visible;
 		}
+
+
+/* shaojieb added the below */
+.imgcap img {
+	border: 1px solid #999;
+	max-width: 100%;
+}
+.imgcap {
+	color: #555;
+	font-size: 14px;
+	text-align: center;
+}
