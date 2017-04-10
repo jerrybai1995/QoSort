@@ -32,7 +32,7 @@ Hidden Markov Model (HMM) is a modeling of a probability distribution. It attemp
   * \\( B \\) is a matrix such that \\( B_{i,j} \\) represents the emission probability of an alphabet \\( V_j \\) at state \\( S_i \\). We call it the **emission matrix**.
 
 <div class="imgcap">
-<img src="assets/images/fg_hmm.png" height="350">
+<img src="https://jerrybai1995.github.io/Pastila/assets/images/fg_hmm.png" height="350">
 <div class="thecap" style="color: #9a9ab7">Mock transformations of different shapes that (ideally) should drive the distribution to two peaks on two sides of the origin</div>
 </div>
 
