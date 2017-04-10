@@ -1,8 +1,8 @@
 ---
 layout: post
 title: Reference
-description: project references
+description: Materials that may help...
 image: assets/images/fg_hmm.png
 ---
 
-content goes here!
+To be updated...

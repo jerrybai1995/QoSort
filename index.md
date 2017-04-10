@@ -1,16 +1,12 @@
 ---
 layout: home
 title: Home
-landing-title: 'Hi, Welcome to Pastila'
+landing-title: 'Hi, I'm Pastila'
 description: null
 image: null
 author: null
 ---
 
-Project description goes here!
+Pastila is a parallel implementation library of (traditionally sequential) HMM algorithms for evaluation and decoding. This simple library will leverage parallel features in CPU (and potentially GPU) offered by multi-core machines and meanwhile re-formulate the problem so that it fits parallel computing.
 
-$$
-f(x) = 3
-$$
-
-this is \\( x^2 \\)
+The authors for this library are, for now, Shaojie Bai and Yutong Chen at CMU.
