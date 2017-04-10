@@ -1,7 +1,7 @@
 ---
 layout: home
 title: Home
-landing-title: 'Hi, I'm Pastila'
+landing-title: 'Hi, Welcome to Pastila'
 description: null
 image: null
 author: null
