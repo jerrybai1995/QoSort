@@ -33,7 +33,7 @@ Hidden Markov Model (HMM) is a modeling of a probability distribution. It attemp
 
 <div class="imgcap">
 <img src="https://jerrybai1995.github.io/Pastila/assets/images/fg_hmm.png" height="350">
-<div class="thecap" style="color: #9a9ab7">Mock transformations of different shapes that (ideally) should drive the distribution to two peaks on two sides of the origin</div>
+<div class="thecap" style="color: #9a9ab7">At each state, an alphabet is emitted as an observation.</div>
 </div>
 
 Moreover, most of the canonical examples of HMM use symbol \\(O_t\\) to represent the observation at time \\(t\\), and \\(q_t\\) the state at time \\(t\\).
