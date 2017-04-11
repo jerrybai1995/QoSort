@@ -2,6 +2,7 @@
 layout: post
 title: Project Proposal
 description: A brief intro to Pastila
+image: assets/images/ai.jpg
 ---
 
 ## Title
