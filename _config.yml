@@ -4,7 +4,7 @@ subtitle: A Parallel Sorting Library
 email1: shaojieb@andrew.cmu.edu
 email2: yutongc@andrew.cmu.edu
 description: A parallel implementation of sorting for large-scale data
-baseurl: "/Pastila" # the subpath of your site, e.g. /blog
+baseurl: "/QoSort" # the subpath of your site, e.g. /blog
 url: "" # the base hostname & protocol for your site
 author: Shaojie Bai & Yutong Chen
 street_address: 5000 Forbes Ave.
