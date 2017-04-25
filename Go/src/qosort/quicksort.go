@@ -24,6 +24,7 @@ func qsort(A sort.Interface, i int, j int) {
 		}()
 		qsort(A, mid, j)
 	}
+	wg.Wait()
 }
 
 func qsort_by3(A sort.Interface, i int, j int) {
