@@ -1,12 +1,12 @@
 ---
 layout: home
 title: Home
-landing-title: 'Hi, Welcome to Pastila'
+landing-title: 'Hi, Welcome to QoSort'
 description: null
 image: null
 author: null
 ---
 
-Pastila is a parallel implementation library of (traditionally sequential) HMM algorithms for evaluation and decoding. This simple library will leverage parallel features in CPU (and potentially GPU) offered by multi-core machines and meanwhile re-formulate the problem so that it fits parallel computing.
+QoSort is a parallel sorting library that is **extremely** useful when sorting a large amount of data on a multi-core machine. Go and Java supported.
 
 The authors for this library are, for now, Shaojie Bai and Yutong Chen at CMU.
