@@ -7,3 +7,5 @@ Gemfile.lock
 *.o
 *.pyc
 *.DS_Store
+Go/
+pkg/

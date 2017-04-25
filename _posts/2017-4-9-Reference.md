@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Reference
-description: Materials that may help...
-image: assets/images/fg_hmm.png
+title: Checkpoint Report
+description: Achievements so far...
+image: assets/images/brain.png
 ---
 
 To be updated...
