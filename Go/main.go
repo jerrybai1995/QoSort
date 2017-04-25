@@ -22,12 +22,15 @@ func (s pairs) Swap(i, j int) {
 	s[i], s[j] = s[j], s[i]
 }
 func (s pairs) Less(i, j int) bool {
+	if i == 1 && j == 3 {
+		fmt.Println(s[i], s[j])
+	}
 	return s[i].x < s[j].x
 }
 
 
 func main() {
-	n := 10000
+	n := 100000000
 	A := make([]doublepair, n)
 	for i := 0; i < n; i++ {
 		A[i].x = rand.Float64()
@@ -36,7 +39,7 @@ func main() {
 
 	start := time.Now()
 
-	qosort.QuickSort(pairs(A), 0, n)
+	qosort.QuickSort(pairs(A))
 	fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
 	fmt.Println("Time elapsed: ", time.Since(start))
 	fmt.Println("Check they array is sorted: ", sort.IsSorted(pairs(A)))
