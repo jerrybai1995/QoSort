@@ -11,6 +11,7 @@ func QuickSort(A sort.Interface) {
 	qsort(A, 0, A.Len())
 }
 
+// Regular quicksort with carefully picked median, and parallelized by goroutines at each recursive call
 func qsort(A sort.Interface, i int, j int) {
 	wg := new(sync.WaitGroup)
 	if (j - i) < ISORT_THRESHOLD {
@@ -27,36 +28,31 @@ func qsort(A sort.Interface, i int, j int) {
 	wg.Wait()
 }
 
+// The quicksort that, instead of splitting the original array into two parts, divides it into 3 sections
 func qsort_by3(A sort.Interface, i int, j int) {
-	wg := new(sync.WaitGroup)
 	if (j - i) < ISORT_THRESHOLD {
 		insertion_sort(A, i, j)
 	} else {
 		L, M, mid_exist := split3(A, i, j)
-		wg.Add(1)
-		go func() {
-			qsort(A, i, L)
-			wg.Done()
-		}()
-		if mid_exist {
-			wg.Add(1)
-			go func() {
-				qsort(A, L, M)
-				wg.Done()
-			}() }
+		qsort(A, i, L)
+		if mid_exist { qsort(A, L, M) }
 		qsort(A, M, j)
 
 	}
-	wg.Wait()
 }
 
+// The quicksort that, instead of recursively handling all subtasks, enqueues them via a scheduler
+func qsort_qsub(A sort.Interface, i int, j int, f scheduler) {
+	return
+}
+
+// Regular quicksort with carefully picked median, and executed recursively
 func qsort_serial(A sort.Interface, i int, j int) {
 	n := j - i
 	for n > ISORT_THRESHOLD {
-		L, M, mid_exist := split3(A, i, j)
-		if mid_exist { qsort_serial(A, L, M) }
-		qsort_serial(A, M, j)
-		n = L - i
+		mid := split2(A, i, i + n)
+		qsort_serial(A, mid, i + n)
+		n = mid - i
 	}
 	insertion_sort(A, i, i + n)
 }
@@ -112,8 +108,8 @@ func split3(A sort.Interface, i int, j int) (int, int, bool) {
 
 	p1, p2 := i, i+1
 
-	A.Swap(i, i+3)
-	A.Swap(i+1, i+6)
+	A.Swap(i, i+1)
+	A.Swap(i+1, i+3)
 	mid_exist := A.Less(p1, p2)
 
 	L, R := i+2, j-1
