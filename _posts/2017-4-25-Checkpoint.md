@@ -5,7 +5,7 @@ description: Achievements so far...
 image: assets/images/brain.jpg
 ---
 
-## Schedule
+## Schedule Ahead
 
   - By the end of April, we shall have a high-performance sorting method implemented in Go with generic type support.
   - By May 4, we shall have at least 2 (or 3, if possible) parallel sorting methods supported in Go so that we are ready for the competition. We will focus on sample sort.
@@ -13,23 +13,23 @@ image: assets/images/brain.jpg
   - By May 10, we should be ready for the presentation.
  
 
-## Summarize completed work
+## Completed Work
 
 We started with rewriting the quicksort algorithm written in C++ provided by Prof. Guy Blelloch into GoLang. Our initial version was designed to only work on ``float64``, for which we were able to achieve comparable performance to GoLang's native generic sort. However, when we tried to adapt the float sort to a generic-typed sort (using ``sort.Interface``), we experienced significant performance bump because of the use of ``Interface`` feature. Upon some research and testing, it seems there's no good solution to this problem currently, so we had to improve the performance in algorithm tweaking and parallelism scheduling.
 
 We also analyzed and optimized the parallelism so that the method better work in GoLang. In particular, the C++ implementation used a split-by-3 method, which we found not to work very well in Go due to GoLang's requirement of implementing a ``sort.Interface`` for the data structure. Moreover, the fact that Go manages multithreading in a different way makes the underlying parallelization different. Instead, we focused on the more traditional 2-way-split. We sampled the points so that the pivot we pick each time is much closer to the median. Moreover, we apply careful synchronization on the goroutines (i.e. threads in Go) so that in-place sorting can work perfectly--- this helps avoid the need to additional memory.
 
-## Goals and deliverables
+## Goals and Deliverables
 __For 210-sorting competition (due May 4)__: Since the deadline for 210-sorting competition much sooner than the 418 project deadline, the plan for the following week is to focus on developing a fast parallel sort in GoLang, and tuning to the given test machine and test dataset, so we can have a competitive algorithm for the competition.
 
 __For 418 project__: The focus of 418 project submission would be a detailed analysis on performance of parallel sorting across various sorting algorithms and tuning. We will adapt from the sorting algorithm we implemented for the 210-sorting competition, and test the performance of algorithm in different settings. Plus, we plan to test performance of common parallel sorting algorithms including quicksort, samplesort, and bitonic sort, implemented in GoLang. As a stretch goal, we plan to perform the same testing in Java and compare the result to GoLang.
 
 
-## What to show at the parallelism competition
+## What to Show at the Parallelism Competition
 For the parallelism competition, we plan to present graphs and anlysis comparing different parallel sorting techniques, and perhaps across different programing languages.
 
 
-## preliminary result
+## Preliminary Result
 We tested the different sorting methods we implemented in GoLang so far on Unix5 machine, which has 2 10-core Intel Xeon E5-2680 v2 processors, resulting a total of 40 logical cores. The results are presented below.
 
 #### Serial Quicksort
