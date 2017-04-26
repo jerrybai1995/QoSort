@@ -38,7 +38,7 @@ We managed to implement a quicksort (with carefully picked pivot) that supports 
 
 #### Parallel Quicksort
 
-Of the various parallel quicksort implementations we offered in our library (3-way split, 2-way split, etc.), our code is currently able to sort 10M double-pair (128 bits per element) in 0.675 second **on a machine with 20 cores**. The competition will be on a 72-core machine, so we believe this is a surprisingly good performance, especially given that we can further optimize it. Note that for ordinary quicksort with perfectly chosen pivor, the parallel wall-clock time complexity is \\( O(\log n) \\). 
+Of the various parallel quicksort implementations we offered in our library (3-way split, 2-way split, etc.), our code is currently able to sort 10M double-pair (128 bits per element) in 0.675 second **on a machine with 20 cores**. The competition will be on a 72-core machine, so we believe this is a surprisingly good performance, especially given that we can further optimize it. Note that for ordinary quicksort with perfectly chosen pivor, the parallel wall-clock time complexity is \\( O(\log^2 n) \\). 
 
 ## Issues/Concerns/Unknowns
 
