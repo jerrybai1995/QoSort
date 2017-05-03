@@ -6,28 +6,38 @@ import (
 	"sync"
 )
 
-func schedule_sort(A sort.Interface) {
-	var enqueue func(t tuple)
+type Continuation func(tuple)
+
+func schedule_sort(A sort.Interface, i int, j int) {
+	var enqueue Continuation
 	cpus := runtime.GOMAXPROCS(runtime.NumCPU())
-	if cpus == 1 { qsort_serial(A, 0, A.Len()) }
+	if cpus == 1 { Qsort_serial(A, 0, A.Len()) }
+
 	wg := new(sync.WaitGroup)
 	queue := make(chan tuple, cpus * 2)
 	enqueue = func(t tuple) {
-		if t.y - t.x < ISORT_THRESHOLD { insertion_sort(A, t.x, t.y) }
+		if t.y - t.x < ISORT_THRESHOLD {
+			insertion_sort(A, t.x, t.y)
+			return
+		}
 		wg.Add(1)
 		select {
 		case queue <- t:
 		default:
-			qsort_qsub(A, t.x, t.y, enqueue)
+			qsort_worker(A, t.x, t.y, enqueue)
 			wg.Done()
 		}
 	}
 	for td := 0; td < cpus; td++ {
 		go func() {
 			for t := range queue {
-				qsort_qsub(A, t.x, t.y, enqueue)
+				qsort_worker(A, t.x, t.y, enqueue)
 				wg.Done()
 			}
 		}()
 	}
+
+	qsort_worker(A, i, j, enqueue)
+	wg.Wait()
+	close(queue)
 }

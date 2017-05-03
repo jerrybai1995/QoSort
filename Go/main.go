@@ -3,6 +3,11 @@ package main
 import (
 	"fmt"
 	"qosort"
+	"runtime"
+	"time"
+	"sorts"
+	"sort"
+	"math/rand"
 )
 
 type doublepair struct {
@@ -22,6 +27,24 @@ func (s pairs) Less(i, j int) bool {
 		fmt.Println(s[i], s[j])
 	}
 	return s[i].x < s[j].x
+}
+
+func Test_qsort_parallel_ref(cores int) {
+	runtime.GOMAXPROCS(cores)
+	n := 100000000
+	A := make([]doublepair, n)
+	for i := 0; i < n; i++ {
+		A[i].x = rand.Float64()
+		A[i].y = rand.Float64()
+	}
+
+	start := time.Now()
+
+	sorts.Quicksort(pairs(A))
+	fmt.Println("********** Result for Serial Quicksort **********")
+	fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
+	fmt.Println("Time elapsed: ", time.Since(start))
+	fmt.Println("Check the array is sorted: ", sort.IsSorted(pairs(A)))
 }
 
 
@@ -44,9 +67,9 @@ func main() {
     //
 	//qosort.Test_qsort_serial(40)
 	//qosort.Test_qsort_by3(40)
-	qosort.Test_qsort_parallel(40)
-	qosort.Test_qsort_parallel_ref(40)
-	qosort.Test_sort(40)
+	qosort.Test_qsort_parallel(8)
+	//Test_qsort_parallel_ref(40)
+	//qosort.Test_sort(8)
 }
 
 

@@ -3,7 +3,6 @@ package qosort
 import (
 	"sort"
 	"sync"
-	"runtime"
 )
 
 var ISORT_THRESHOLD = 12
@@ -33,23 +32,40 @@ func qsort_runner(A sort.Interface, i int, j int, jQ chan Job, f CallBack) {
 	insertion_sort(A, i, i + n)
 }
 
-// Parallel quicksort with optimized workload
-func Qsort_parallel(A sort.Interface) {
-	cores := runtime.GOMAXPROCS(0)
-
-	numWorkers := cores
-	pool := NewPool(numWorkers, 100, qsort_runner)
-
-	j := Job{
-		lo: 0,
-		hi: A.Len(),
-		data: A,
+func qsort_worker(A sort.Interface, i int, j int, f Continuation) {
+	n := j - i
+	for n > ISORT_THRESHOLD {
+		mid := split2(A, i, i + n)
+		if mid - i < i + n - mid {
+			f(tuple{i, mid})
+			i = mid
+		} else {
+			f(tuple{mid, i + n})
+			j = mid
+		}
+		n = j - i
 	}
+	insertion_sort(A, i, i + n)
+}
 
-	pool.WaitCount(1)
-	pool.jobQueue <- j
-	pool.WaitAll()
-	pool.ShutDown()
+// Parallel quicksort with optimized workload
+func Qsort_parallel(A sort.Interface, i int, j int) {
+	//cores := runtime.GOMAXPROCS(0)
+	//
+	//numWorkers := cores
+	//pool := NewPool(numWorkers, cores, qsort_runner)
+	//
+	//job := Job{
+	//	lo: i,
+	//	hi: j,
+	//	data: A,
+	//}
+	//
+	//pool.WaitCount(1)
+	//pool.jobQueue <- job
+	//pool.WaitAll()
+	//pool.ShutDown()
+	schedule_sort(A, i, j)
 }
 
 // Regular quicksort with carefully picked median, and parallelized by goroutines at each recursive call
@@ -88,11 +104,11 @@ func qsort_qsub(A sort.Interface, i int, j int, f scheduler) {
 }
 
 // Regular quicksort with carefully picked median, and executed recursively
-func qsort_serial(A sort.Interface, i int, j int) {
+func Qsort_serial(A sort.Interface, i int, j int) {
 	n := j - i
 	for n > ISORT_THRESHOLD {
 		mid := split2(A, i, i + n)
-		qsort_serial(A, mid, i + n)
+		Qsort_serial(A, mid, i + n)
 		n = mid - i
 	}
 	insertion_sort(A, i, i + n)
