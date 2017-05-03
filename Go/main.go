@@ -26,24 +26,25 @@ func (s pairs) Less(i, j int) bool {
 
 
 func main() {
+
 	qosort.Test_qsort_serial(10)
 	qosort.Test_qsort_by3(10)
-	qosort.Test_qsort_par(10)
+	qosort.Test_qsort_parallel(10)
 	qosort.Test_sort(10)
 
 	qosort.Test_qsort_serial(20)
 	qosort.Test_qsort_by3(20)
-	qosort.Test_qsort_par(20)
+	qosort.Test_qsort_parallel(10)
 	qosort.Test_sort(20)
 
 	qosort.Test_qsort_serial(30)
 	qosort.Test_qsort_by3(30)
-	qosort.Test_qsort_par(30)
+	qosort.Test_qsort_parallel(10)
 	qosort.Test_sort(30)
 
 	qosort.Test_qsort_serial(40)
 	qosort.Test_qsort_by3(40)
-	qosort.Test_qsort_par(40)
+	qosort.Test_qsort_parallel(10)
 	qosort.Test_sort(40)
 }
 

@@ -27,6 +27,24 @@ func (s pairs) Less(i, j int) bool {
 	return s[i].x < s[j].x
 }
 
+func Test_qsort_parallel(cores int) {
+	runtime.GOMAXPROCS(cores)
+	n := 100000000
+	A := make([]doublepair, n)
+	for i := 0; i < n; i++ {
+		A[i].x = rand.Float64()
+		A[i].y = rand.Float64()
+	}
+
+	start := time.Now()
+
+	Qsort_parallel(pairs(A))
+	fmt.Println("********** Result for Serial Quicksort **********")
+	fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
+	fmt.Println("Time elapsed: ", time.Since(start))
+	fmt.Println("Check the array is sorted: ", sort.IsSorted(pairs(A)))
+}
+
 func Test_qsort_serial(cores int) {
 	runtime.GOMAXPROCS(cores)
 	n := 10000000
@@ -42,7 +60,7 @@ func Test_qsort_serial(cores int) {
 	fmt.Println("********** Result for Serial Quicksort **********")
 	fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
 	fmt.Println("Time elapsed: ", time.Since(start))
-	fmt.Println("Check they array is sorted: ", sort.IsSorted(pairs(A)))
+	fmt.Println("Check the array is sorted: ", sort.IsSorted(pairs(A)))
 }
 
 func Test_qsort_by3(cores int) {
@@ -60,12 +78,12 @@ func Test_qsort_by3(cores int) {
 	fmt.Println("********** Result for Parallel Quicksort (Split by 3) **********")
 	fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
 	fmt.Println("Time elapsed: ", time.Since(start))
-	fmt.Println("Check they array is sorted: ", sort.IsSorted(pairs(A)))
+	fmt.Println("Check the array is sorted: ", sort.IsSorted(pairs(A)))
 }
 
 func Test_qsort_par(cores int) {
 	runtime.GOMAXPROCS(cores)
-	n := 10000000
+	n := 100000000
 	A := make([]doublepair, n)
 	for i := 0; i < n; i++ {
 		A[i].x = rand.Float64()
@@ -78,7 +96,7 @@ func Test_qsort_par(cores int) {
 	fmt.Println("********** Result for Parallel Quicksort (Split by 2) **********")
 	fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
 	fmt.Println("Time elapsed: ", time.Since(start))
-	fmt.Println("Check they array is sorted: ", sort.IsSorted(pairs(A)))
+	fmt.Println("Check the array is sorted: ", sort.IsSorted(pairs(A)))
 }
 
 func Test_sort(cores int) {
@@ -96,7 +114,7 @@ func Test_sort(cores int) {
 	fmt.Println("********** Result for Builtin Sort **********")
 	fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
 	fmt.Println("Time elapsed: ", time.Since(start))
-	fmt.Println("Check they array is sorted: ", sort.IsSorted(pairs(A)))
+	fmt.Println("Check the array is sorted: ", sort.IsSorted(pairs(A)))
 }
 
 
