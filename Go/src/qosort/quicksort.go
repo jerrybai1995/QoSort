@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-var SEQ_SORT_THRESHOLD = 127
+var SEQ_SORT_THRESHOLD = 120
 var ISORT_THRESHOLD = 12
 
 func QuickSort(A sort.Interface) {

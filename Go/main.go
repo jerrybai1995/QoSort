@@ -3,6 +3,12 @@ package main
 import (
 	"fmt"
 	"qosort"
+	"os"
+	"runtime"
+	"time"
+	"sort"
+	"math/rand"
+	"strconv"
 )
 
 type doublepair struct {
@@ -26,9 +32,31 @@ func (s pairs) Less(i, j int) bool {
 
 
 func main() {
+	cores := runtime.GOMAXPROCS(runtime.NumCPU())
+	runtime.GOMAXPROCS(cores)
 
-	qosort.Test_qsort_parallel(40)
-	qosort.Test_sort(40)
+	args := os.Args
+	n := 100000000
+	var err error
+	if len(args) > 1 {
+		n, err = strconv.Atoi(args[1])
+		if err != nil { fmt.Println("Need input argument for array length n.") }
+	}
+
+	A := make([]doublepair, n)
+	for i := 0; i < n; i++ {
+		A[i].x = rand.Float64()
+		A[i].y = rand.Float64()
+	}
+
+	start := time.Now()
+
+	qosort.Qsort_parallel(pairs(A), 0, n)
+	fmt.Println("********** Result for (Optimized) Parallel Quicksort **********")
+	fmt.Println("Length of double-pair array: ", n)
+	fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
+	fmt.Println("Time elapsed: ", time.Since(start))
+	fmt.Println("Check the array is sorted: ", sort.IsSorted(pairs(A)))
 }
 
 

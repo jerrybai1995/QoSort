@@ -14,7 +14,7 @@ func schedule_sort(A sort.Interface, i int, j int) {
 	if cpus == 1 { Qsort_serial(A, 0, A.Len()) }
 
 	wg := new(sync.WaitGroup)
-	queue := make(chan tuple, cpus * 3)
+	queue := make(chan tuple, cpus * 2)
 	enqueue = func(t tuple) {
 		if t.y - t.x < SEQ_SORT_THRESHOLD {
 			qsort_worker(A, t.x, t.y, enqueue)
