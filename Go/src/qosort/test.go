@@ -6,6 +6,7 @@ import (
 	"time"
 	"math/rand"
 	"runtime"
+	"math"
 )
 
 type doublepair struct {
@@ -27,22 +28,28 @@ func (s pairs) Less(i, j int) bool {
 	return s[i].x < s[j].x
 }
 
-func Test_qsort_parallel(cores int) {
+func Test_qsort_parallel(cores int, length int, times int) {
 	runtime.GOMAXPROCS(cores)
-	n := 100000000
-	A := make([]doublepair, n)
-	for i := 0; i < n; i++ {
-		A[i].x = rand.Float64()
-		A[i].y = rand.Float64()
+	n := length
+	exe_time := 10000.0
+	for t := 0; t < 5; t++ {
+		fmt.Printf("Run %d: Starting to initialize random double-pair array...\n", t)
+		A := make([]doublepair, n)
+		for i := 0; i < n; i++ {
+			A[i].x = rand.Float64()
+			A[i].y = rand.Float64()
+		}
+		fmt.Printf("Run %d: Starting to execute\n", t)
+		start := time.Now()
+		Qsort_parallel(pairs(A), 0, n)
+		diff := time.Since(start).Seconds()
+		fmt.Printf("Run %d: Finished execution. Check the array is sorted: %t.\n\n", t, sort.IsSorted(pairs(A)))
+		exe_time = math.Min(exe_time, diff)
 	}
 
-	start := time.Now()
-
-	Qsort_parallel(pairs(A), 0, n)
-	fmt.Println("********** Result for (Optimized) Parallel Quicksort **********")
+	fmt.Println("********** Result for 5 runs of (Optimized) Parallel Quicksort **********")
 	fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
-	fmt.Println("Time elapsed: ", time.Since(start))
-	fmt.Println("Check the array is sorted: ", sort.IsSorted(pairs(A)))
+	fmt.Println("Time elapsed best of 5 (seconds): ", exe_time)
 }
 
 func Test_qsort_serial(cores int) {
