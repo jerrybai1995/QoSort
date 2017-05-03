@@ -39,7 +39,7 @@ func Test_qsort_parallel(cores int) {
 	start := time.Now()
 
 	Qsort_parallel(pairs(A), 0, n)
-	fmt.Println("********** Result for Serial Quicksort **********")
+	fmt.Println("********** Result for (Optimized) Parallel Quicksort **********")
 	fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
 	fmt.Println("Time elapsed: ", time.Since(start))
 	fmt.Println("Check the array is sorted: ", sort.IsSorted(pairs(A)))
