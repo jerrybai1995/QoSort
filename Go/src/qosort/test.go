@@ -6,6 +6,7 @@ import (
 	"time"
 	"math/rand"
 	"runtime"
+	"sorts"
 )
 
 type doublepair struct {
@@ -25,6 +26,24 @@ func (s pairs) Less(i, j int) bool {
 		fmt.Println(s[i], s[j])
 	}
 	return s[i].x < s[j].x
+}
+
+func Test_qsort_parallel_ref(cores int) {
+	runtime.GOMAXPROCS(cores)
+	n := 100000000
+	A := make([]doublepair, n)
+	for i := 0; i < n; i++ {
+		A[i].x = rand.Float64()
+		A[i].y = rand.Float64()
+	}
+
+	start := time.Now()
+
+	sorts.Quicksort(pairs(A))
+	fmt.Println("********** Result for Serial Quicksort **********")
+	fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
+	fmt.Println("Time elapsed: ", time.Since(start))
+	fmt.Println("Check the array is sorted: ", sort.IsSorted(pairs(A)))
 }
 
 func Test_qsort_parallel(cores int) {
@@ -47,7 +66,7 @@ func Test_qsort_parallel(cores int) {
 
 func Test_qsort_serial(cores int) {
 	runtime.GOMAXPROCS(cores)
-	n := 10000000
+	n := 100000000
 	A := make([]doublepair, n)
 	for i := 0; i < n; i++ {
 		A[i].x = rand.Float64()
@@ -65,7 +84,7 @@ func Test_qsort_serial(cores int) {
 
 func Test_qsort_by3(cores int) {
 	runtime.GOMAXPROCS(cores)
-	n := 10000000
+	n := 100000000
 	A := make([]doublepair, n)
 	for i := 0; i < n; i++ {
 		A[i].x = rand.Float64()
@@ -83,7 +102,7 @@ func Test_qsort_by3(cores int) {
 
 func Test_qsort_par(cores int) {
 	runtime.GOMAXPROCS(cores)
-	n := 100000000
+	n := 1000000000
 	A := make([]doublepair, n)
 	for i := 0; i < n; i++ {
 		A[i].x = rand.Float64()
@@ -101,7 +120,7 @@ func Test_qsort_par(cores int) {
 
 func Test_sort(cores int) {
 	runtime.GOMAXPROCS(cores)
-	n := 10000000
+	n := 100000000
 	A := make([]doublepair, n)
 	for i := 0; i < n; i++ {
 		A[i].x = rand.Float64()
