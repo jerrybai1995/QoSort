@@ -1,5 +1,4 @@
 package qosort
-// package main
 
 import (
         "sort"
@@ -47,6 +46,26 @@ func (w *Worker) start() {
             }
         }
     }()
+}
+
+func qsort_runner(A sort.Interface, i int, j int, jQ chan Job, f CallBack) {
+    n := j - i
+    for n > SEQ_SORT_THRESHOLD {
+        mid := split2(A, i, i + n)
+        j := Job{
+            lo:   mid,
+            hi:   i+n,
+            data: A,
+        }
+        select {
+        case jQ <- j:
+            f()
+        default:
+            qsort_runner(A, mid, i+n, jQ, f)
+        }
+        n = mid - i
+    }
+    insertion_sort(A, i, i + n)
 }
 
 func newWorker(pool chan *Worker, jQueue chan Job, sMethod SortMethod, wg *sync.WaitGroup) *Worker {

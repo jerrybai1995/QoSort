@@ -5,36 +5,32 @@ import (
 	"sync"
 )
 
+var SEQ_SORT_THRESHOLD = 127
 var ISORT_THRESHOLD = 12
 
 func QuickSort(A sort.Interface) {
 	Qsort_naive_parallel(A, 0, A.Len())
 }
 
-// The regular, serial quicksort to be scheduled by a worker (runner)
-func qsort_runner(A sort.Interface, i int, j int, jQ chan Job, f CallBack) {
-	n := j - i
-	for n > ISORT_THRESHOLD {
-		mid := split2(A, i, i + n)
-		j := Job{
-			lo:   mid,
-			hi:   i+n,
-			data: A,
-		}
-		select {
-		case jQ <- j:
-			f()
-		default:
-			qsort_runner(A, mid, i+n, jQ, f)
-		}
-		n = mid - i
+// median_of_three moves the median of the three to the first memory location m1
+func median_of_three(data sort.Interface, m1, m0, m2 int) {
+	if data.Less(m1, m0) {
+		data.Swap(m1, m0)
 	}
-	insertion_sort(A, i, i + n)
+	// data[m0] <= data[m1]
+	if data.Less(m2, m1) {
+		data.Swap(m2, m1)
+		// data[m0] <= data[m2] && data[m1] < data[m2]
+		if data.Less(m1, m0) {
+			data.Swap(m1, m0)
+		}
+	}
 }
 
+// The regular, serial quicksort to be scheduled by a worker (runner)
 func qsort_worker(A sort.Interface, i int, j int, f Continuation) {
 	n := j - i
-	for n > ISORT_THRESHOLD {
+	for n > SEQ_SORT_THRESHOLD {
 		mid := split2(A, i, i + n)
 		if mid - i < i + n - mid {
 			f(tuple{i, mid})
@@ -45,33 +41,22 @@ func qsort_worker(A sort.Interface, i int, j int, f Continuation) {
 		}
 		n = j - i
 	}
-	insertion_sort(A, i, i + n)
+	if n > 7 {
+		Qsort_serial(A, i, i + n)
+	} else {
+		insertion_sort(A, i, i + n)
+	}
 }
 
 // Parallel quicksort with optimized workload
 func Qsort_parallel(A sort.Interface, i int, j int) {
-	//cores := runtime.GOMAXPROCS(0)
-	//
-	//numWorkers := cores
-	//pool := NewPool(numWorkers, cores, qsort_runner)
-	//
-	//job := Job{
-	//	lo: i,
-	//	hi: j,
-	//	data: A,
-	//}
-	//
-	//pool.WaitCount(1)
-	//pool.jobQueue <- job
-	//pool.WaitAll()
-	//pool.ShutDown()
 	schedule_sort(A, i, j)
 }
 
 // Regular quicksort with carefully picked median, and parallelized by goroutines at each recursive call
 func Qsort_naive_parallel(A sort.Interface, i int, j int) {
 	wg := new(sync.WaitGroup)
-	if (j - i) < ISORT_THRESHOLD {
+	if (j - i) < SEQ_SORT_THRESHOLD {
 		insertion_sort(A, i, j)
 	} else {
 		mid := split2(A, i, j)
@@ -87,7 +72,7 @@ func Qsort_naive_parallel(A sort.Interface, i int, j int) {
 
 // The quicksort that, instead of splitting the original array into two parts, divides it into 3 sections
 func qsort_by3(A sort.Interface, i int, j int) {
-	if (j - i) < ISORT_THRESHOLD {
+	if (j - i) < SEQ_SORT_THRESHOLD {
 		insertion_sort(A, i, j)
 	} else {
 		L, M, mid_exist := split3(A, i, j)
@@ -96,11 +81,6 @@ func qsort_by3(A sort.Interface, i int, j int) {
 		Qsort_naive_parallel(A, M, j)
 
 	}
-}
-
-// The quicksort that, instead of recursively handling all subtasks, enqueues them via a scheduler
-func qsort_qsub(A sort.Interface, i int, j int, f scheduler) {
-	return
 }
 
 // Regular quicksort with carefully picked median, and executed recursively
@@ -134,11 +114,29 @@ func sort5(A sort.Interface, i int, j int) {
 }
 
 func split2(A sort.Interface, i int, j int) int {
-	sort5(A, i, j)
-	A.Swap(i, i+2)
-	A.Swap(i+4, j-1)  // To maintain invariant that R is larger than pivot and L is smaller than pivot
+	// sort5(A, i, j)
+	m := i + (j - i)/2 // Written like this to avoid integer overflow.
+	if j - i > 80 {
+		s := (j - i) / 8
+		r := (j - i) / 16
+		median_of_three(A, i, i+s, i+2*s)
+		median_of_three(A, i, i+r, i+s+r)
+		median_of_three(A, m, m-s, m+s)
+		median_of_three(A, m, m-s+r, m+s+r)
+		median_of_three(A, j-1, j-1-s, j-1-2*s)
+		median_of_three(A, j-1, j-1-r, j-1-s-r)
+	} else if j - i > 40 {
+		// Tukey's ``Ninther,'' median of three medians of three.
+		s := (j - i) / 8
+		median_of_three(A, i, i+s, i+2*s)
+		median_of_three(A, m, m-s, m+s)
+		median_of_three(A, j-1, j-1-s, j-1-2*s)
+	}
+	median_of_three(A, i, m, j-1)
+
+	// To maintain invariant that R is larger than pivot and L is smaller than pivot
 	pivot := i
-	L, R := pivot+1, j-1
+	L, R := pivot, j-1
 
 	for A.Less(L+1, pivot) { L++ }
 	for A.Less(pivot, R-1) { R-- }
