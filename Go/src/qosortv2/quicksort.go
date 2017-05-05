@@ -2,10 +2,12 @@ package qosortv2
 
 import (
     "sync"
+    // "time"
+    // "fmt"
 )
 
-var SEQ_SORT_THRESHOLD = 120
-var ISORT_THRESHOLD =12
+var SEQ_SORT_THRESHOLD = 130
+var ISORT_THRESHOLD = 12
 
 
 func QuickSort(A []qselem) {
@@ -100,7 +102,6 @@ func split2(A []qselem, i, j int) int {
         median_of_three(A, j-1, j-1-s, j-1-2*s)
         median_of_three(A, j-1, j-1-r, j-1-s-r)
     } else if j - i > 40 {
-        // Tukey's ``Ninther,'' median of three medians of three.
         s := (j - i) / 8
         median_of_three(A, i, i+s, i+2*s)
         median_of_three(A, m, m-s, m+s)
@@ -108,16 +109,16 @@ func split2(A []qselem, i, j int) int {
     }
     median_of_three(A, i, m, j-1)
 
-    pivot := i
-    L, R := pivot, j-1
+    pivot := A[i]
+    L, R := i, j-1
 
-    for A[L+1].Less(A[pivot]) {L++}  // if A[M+1] <= A[pivot], M++
-    for A[pivot].Less(A[R-1]) {R--}  // if A[pivot] < A[R-1], R--
+    for A[L+1].Less(pivot) {L++}
+    for pivot.Less(A[R-1]) {R--} 
 
     M := L
     for {
-        for M < R && !A[pivot].Less(A[M+1]) {M++}
-        for M < R && A[pivot].Less(A[R-1]) {R--}
+        for M < R && !pivot.Less(A[M+1]) {M++}
+        for M < R && pivot.Less(A[R-1]) {R--}
 
         if R - M <= 1 {
             // A[M] <= pivot and yet A[R] > pivot
@@ -130,6 +131,7 @@ func split2(A []qselem, i, j int) int {
     swap(A, i, M)
 
     return R
+
 }
 
 /**************************************************

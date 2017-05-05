@@ -31,14 +31,17 @@ func Test_qsort_parallel(cores int, length int, times int) {
 }
 
 func Test_insertion_sort(length int) {
-    fmt.Printf("Testing insertion_sort with input size: %d \n", length)
+    fmt.Printf("qosortv2: Testing insertion_sort with input size: %d \n", length)
 
     n := length
 
     A := make_random_doublepairs(n)
 
+    start := time.Now()
     insertion_sort(A, 0, n)
+    diff := time.Since(start).Seconds()
     fmt.Printf("Finished execution. Check the array is sorted: %t.\n\n", sort.IsSorted(qsarray(A)))
+    fmt.Println("Time elapsed (seconds): ", diff)
 }
 
 func Test_Qsort_serial(length int) {
@@ -48,19 +51,32 @@ func Test_Qsort_serial(length int) {
 
     A := make_random_doublepairs(n)
 
+    start := time.Now()
     Qsort_serial(A, 0, n)
+
+    fmt.Println("********** Result for Serial Quicksort **********")
+    fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
+    fmt.Println("Time elapsed: ", time.Since(start))
     fmt.Printf("Finished execution. Check the array is sorted: %t.\n\n", sort.IsSorted(qsarray(A)))
 }
 
-func Test_Qsort_naive_par(length int) {
+func Test_Qsort_naive_par(cores int, length int) {
+    runtime.GOMAXPROCS(cores)
+
     fmt.Printf("Testing Qsort_serial sort with input size: %d\n", length)
 
     n := length
 
     A := make_random_doublepairs(n)
 
+    start := time.Now()
     Qsort_naive_parallel(A, 0, n)
-    fmt.Printf("Finished execution. Check the array is sorted: %t.\n\n", sort.IsSorted(qsarray(A)))
+    
+    fmt.Println("********** Result for naive-par Quicksort **********")
+    fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
+    fmt.Println("Time elapsed: ", time.Since(start))
+    fmt.Printf("Finished execution. Check the array is sorted: %t.\n\n", sort.IsSorted(qsarray(A)))    
+
 }
 
 func make_random_doublepairs(n int) []qselem {
