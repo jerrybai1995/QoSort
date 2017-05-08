@@ -2,6 +2,7 @@ package qosortv2
 
 import (
     "math/rand"
+    "sync"
 )
 
 
@@ -9,7 +10,7 @@ QUICKSORT_THRESHOLD := 20000
 OVER_SAMPLE := 8
 
 func SampleSort(A []qselem) {
-
+    sample_sort(A, 0, len(A))
 }
 
 func sample_sort(A []qselem, i, j int) {
@@ -19,6 +20,7 @@ func sample_sort(A []qselem, i, j int) {
         return
     }
 
+    // NEED TO FIND BEST BLOCK/BUCKET NUMBERS
     num_blocks := 6
     block_size := ((n-1)/num_blocks) + 1;
     num_buckets := 6
@@ -27,14 +29,17 @@ func sample_sort(A []qselem, i, j int) {
     
     sample_set := new([]qselem, sample_set_size)
 
+    // Randomly sample from input
     // parallel?
     for i := 0; i < sample_set_size; i++ {
         s := rand.Int() % n
         sample_set[i] = A[s]
     }
 
-    Qsort_naive_parallel(sample_set, 0, sample_set_size)
+    // should we use qsort_serial ???
+    Qsort_serial(sample_set, 0, sample_set_size)
 
+    // evenly select pivots from sorted sample
     pivots = new([]qselem, num_buckets-1)
     for k := 0; k < num_buckets-1; k++ {
         pivots[k] = sample_set[OVER_SAMPLE * k + OVER_SAMPLE/2]
@@ -43,24 +48,36 @@ func sample_sort(A []qselem, i, j int) {
     sketch := new([]qselem, n)
     counts := new([]int, m)
     copy(sketch, A)
+
+    // sort within each block and count size of each bucket
+    wg := new(sync.WaitGroup)
     for b := 0; b < num_blocks; b++ {
+        wg.Add(1)
         go func() {
             offset := b * block_size;
             size = (i < num_blocks - 1) ? block_size : n-offset;
             Qsort_parallel(sketch, offset, size)
             merge_seq(sketch, offset, size, pivots, num_buckets-1, counts, b*num_buckets)
+            wg.Done()
         }()
     }
+    wg.Wait()
 
+    // **************************
     // add transpose buckets here
+    // **************************
 
+    wg2 := new(sync.WaitGroup)
     for b := 0; b < num_buckets; b++ {
+        wg2.Add(1)
         go func() {
             istart := bucket_offsets[b]
             iend := bucket_offsets[b+1]
+            Qsort_parallel(A, istart, iend)
+            wg.Done()
         }()
-        Qsort_parallel(A, istart, iend)
     }
+    wg2.Wait()
 }
 
 func merge_seq(A []qselem, A_offset int, A_size int,
