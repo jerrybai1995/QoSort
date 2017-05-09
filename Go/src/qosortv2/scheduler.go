@@ -7,9 +7,13 @@ import (
 
 type Continuation func(tuple)
 
-func schedule_sort(A []qselem, i int, j int) {
+func schedule_sort(A []qselem, i int, j int, cpus int) {
     var enqueue Continuation
-    cpus := runtime.GOMAXPROCS(runtime.NumCPU())
+
+    if cpus == 0 {
+        cpus = runtime.GOMAXPROCS(runtime.NumCPU())
+    }
+
     if cpus == 1 {Qsort_serial(A, 0, len(A))}
 
     wg := new(sync.WaitGroup)

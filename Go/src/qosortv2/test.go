@@ -40,7 +40,7 @@ func Test_qsort_parallel(cores int, length int, times int) {
 
         fmt.Printf("Run %d: Starting to execute\n", t)
         start := time.Now()
-        Qsort_parallel(A, 0, n)
+        Qsort_parallel(A, 0, n, 0)
         diff := time.Since(start).Seconds()
         fmt.Printf("Run %d: Finished execution. Check the array is sorted: %t.\n\n", t, sort.IsSorted(qsarray(A)))
         exe_time = math.Min(exe_time, diff)

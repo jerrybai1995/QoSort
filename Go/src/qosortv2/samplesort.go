@@ -10,6 +10,9 @@ import (
 var QUICKSORT_THRESHOLD = 10000
 var OVER_SAMPLE = 8
 
+// set to 0 will spawn num_cores worker threads in each call to Qsort_par
+var QSORT_POOL_SIZE = 0
+
 func SampleSort(A []qselem) {
     sample_sort(A, 0, len(A))
 }
@@ -17,7 +20,7 @@ func SampleSort(A []qselem) {
 func sample_sort(A []qselem, i, j int) {
     n := j - i
     if n < QUICKSORT_THRESHOLD {
-        Qsort_parallel(A, i, j)
+        Qsort_parallel(A, i, j, 0)
         return
     }
 
@@ -59,7 +62,7 @@ func sample_sort(A []qselem, i, j int) {
             offset := b_copy * block_size
             size := block_size
             if b_copy == num_blocks - 1 { size = n - offset }      // The last block will take whatever's left
-            Qsort_parallel(sketch, offset, offset + size)
+            Qsort_parallel(sketch, offset, offset + size, QSORT_POOL_SIZE)
             merge_seq(sketch, offset, size, pivots, num_buckets-1, counts, b_copy*num_buckets)
             wg.Done()
         }()
@@ -75,7 +78,7 @@ func sample_sort(A []qselem, i, j int) {
         go func() {
             istart := bucket_offsets[b_copy]
             iend := bucket_offsets[b_copy+1]
-            Qsort_parallel(A, istart, iend)
+            Qsort_parallel(A, istart, iend, QSORT_POOL_SIZE)
             wg2.Done()
         }()
     }

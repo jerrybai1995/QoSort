@@ -14,8 +14,8 @@ func QuickSort(A []qselem) {
     Qsort_naive_parallel(A, 0, len(A))
 }
 
-func Qsort_parallel(A []qselem, i,j int) {
-    schedule_sort(A, i, j)
+func Qsort_parallel(A []qselem, i,j,cores int) {
+    schedule_sort(A, i, j, cores)
 }
 
 /**************************************************
