@@ -9,11 +9,32 @@ import (
     "time"
 )
 
+func Test_ssort_parallel(cores int, length int, times int) {
+    runtime.GOMAXPROCS(cores)
+    n := length
+    exe_time := 10000.0
+    for t := 0; t < times; t++ {
+        fmt.Printf("Run %d: Starting to initialize random double-pair array of size %d...\n", t, length)
+        A := make_random_doublepairs(n)
+
+        fmt.Printf("Run %d: Starting to execute\n", t)
+        start := time.Now()
+        SampleSort(A)
+        diff := time.Since(start).Seconds()
+        fmt.Printf("Run %d: Finished execution. Check the array is sorted: %t.\n\n", t, sort.IsSorted(qsarray(A)))
+        exe_time = math.Min(exe_time, diff)
+    }
+
+    fmt.Println("********** Result for 5 runs of (Optimized) Parallel Samplesort **********")
+    fmt.Println("Number of processors used: ", runtime.GOMAXPROCS(0))
+    fmt.Println("Time elapsed best of 5 (seconds): ", exe_time)
+}
+
 func Test_qsort_parallel(cores int, length int, times int) {
     runtime.GOMAXPROCS(cores)
     n := length
     exe_time := 10000.0
-    for t := 0; t < 5; t++ {
+    for t := 0; t < times; t++ {
         fmt.Printf("Run %d: Starting to initialize random double-pair array...\n", t)
         A := make_random_doublepairs(n)
 
