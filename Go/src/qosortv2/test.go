@@ -14,7 +14,7 @@ func Test_ssort_parallel(cores int, length int, times int) {
     n := length
     exe_time := 10000.0
     for t := 0; t < times; t++ {
-        fmt.Printf("Run %d: Starting to initialize random double-pair array of size %d...\n", t, length)
+        fmt.Printf("\n\nRun %d: Starting to initialize random double-pair array of size %d...\n", t, length)
         A := make_random_doublepairs(n)
 
         fmt.Printf("Run %d: Starting to execute\n", t)
@@ -35,7 +35,7 @@ func Test_qsort_parallel(cores int, length int, times int) {
     n := length
     exe_time := 10000.0
     for t := 0; t < times; t++ {
-        fmt.Printf("Run %d: Starting to initialize random double-pair array...\n", t)
+        fmt.Printf("\n\nRun %d: Starting to initialize random double-pair array of size %d...\n", t, length)
         A := make_random_doublepairs(n)
 
         fmt.Printf("Run %d: Starting to execute\n", t)

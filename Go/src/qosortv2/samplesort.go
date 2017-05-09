@@ -3,6 +3,7 @@ package qosortv2
 import (
     "math/rand"
     "sync"
+	"math"
 )
 
 
@@ -21,9 +22,9 @@ func sample_sort(A []qselem, i, j int) {
     }
 
     // TODO: NEED TO FIND BEST BLOCK/BUCKET NUMBERS
-    num_blocks := 20
+    num_blocks := int(math.Ceil(math.Sqrt(float64(n)) / 4))
     block_size := ((n-1)/num_blocks) + 1
-    num_buckets := 20
+    num_buckets := num_blocks
     sample_set_size := num_buckets * OVER_SAMPLE
     m := num_blocks * num_buckets
     

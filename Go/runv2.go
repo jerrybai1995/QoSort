@@ -15,7 +15,7 @@ func main() {
     // qosortv2.Test_Qsort_serial(100000000)
     // qosortv2.Test_Qsort_naive_par(4,10000000)
 
-    qosortv2.Test_ssort_parallel(8, 1000000, 1)
-    qosortv2.Test_qsort_parallel(8, 1000000, 1)
+    qosortv2.Test_ssort_parallel(40, 10000000, 1)
+    qosortv2.Test_qsort_parallel(40, 10000000, 1)
 
 }
