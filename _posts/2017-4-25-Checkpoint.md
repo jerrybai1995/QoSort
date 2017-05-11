@@ -8,8 +8,8 @@ image: assets/images/brain.jpg
 ## Schedule Ahead
 
   - By the end of April, we shall have a high-performance sorting method implemented in Go with generic type support.
-  - By May 4, we shall have at least 2 (or 3, if possible) parallel sorting methods supported in Go so that we are ready for the competition. We will focus on sample sort.
-  - By May 6, we will try to further optimize the Go implementations. Meanwhile, we should start the Java implementation as well if everything looks good.
+  - By May 4, we shall have at least 2 (or 3, if possible) parallel sorting methods supported in Go so that we are ready for the competition. We will focus on quicksort and sample sort for the competition.
+  - By May 6, we will try to further optimize the Go implementations.
   - By May 10, we should be ready for the presentation.
  
 
@@ -22,7 +22,7 @@ We also analyzed and optimized the parallelism so that the method better work in
 ## Goals and Deliverables
 __For 210-sorting competition (due May 4)__: Since the deadline for 210-sorting competition much sooner than the 418 project deadline, the plan for the following week is to focus on developing a fast parallel sort in GoLang, and tuning to the given test machine and test dataset, so we can have a competitive algorithm for the competition.
 
-__For 418 project__: The focus of 418 project submission would be a detailed analysis on performance of parallel sorting across various sorting algorithms and tuning. We will adapt from the sorting algorithm we implemented for the 210-sorting competition, and test the performance of algorithm in different settings. Plus, we plan to test performance of common parallel sorting algorithms including quicksort, samplesort, and bitonic sort, implemented in GoLang. As a stretch goal, we plan to perform the same testing in Java and compare the result to GoLang.
+__For 418 project__: The focus of 418 project submission would be a detailed analysis on performance of parallel sorting across various sorting algorithms and tuning. We will adapt from the sorting algorithm we implemented for the 210-sorting competition, and test the performance of algorithm in different settings. Plus, we plan to test performance of common parallel sorting algorithms including quicksort, samplesort, and bitonic sort, implemented in GoLang. As a stretch goal, we may perform some testing in Java and compare the result to GoLang.
 
 
 ## What to Show at the Parallelism Competition
