@@ -2,9 +2,8 @@ package main
 
 import (
     // "fmt"
-    "qosortv2"
+    "ssort_dpair"
     "runtime"
-    // "strconv"
 )
 
 func main() {
@@ -14,10 +13,7 @@ func main() {
     // n := 1000000
     times := 5
 
-    qosortv2.Test_qsort_parallel(cores, n, times)
-
-    // qosortv2.Test_insertion_sort(1000)
-    // qosortv2.Test_Qsort_serial(100000)
-    // qosortv2.Test_Qsort_naive_par(1000000)
+    ssort_dpair.Test_qsort_parallel(cores, n, times)
+    ssort_dpair.Test_ssort_parallel(cores, n, times)
 
 }
