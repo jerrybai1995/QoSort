@@ -4,3 +4,5 @@ DS_STORE/
 .o/
 pkg/
 sorts/
+github_random.go
+run.go
