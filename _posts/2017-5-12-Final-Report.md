@@ -75,7 +75,7 @@ These thoughts have guided us through the various optimizations and attempts tha
 
 There aren't many parallel sorting implementations (at least for the open source which we can have access to) available in developer communities such as GitHub, therefore, the specific implementations and ideas for the different approaches most came from ourselves. However, we do note that this project was initially inspired by the CMU's 15-210 sorting competition. But we aim for not merely a fast-algorithm that works on, say integers; but also a generic library that can sorts strings, floats, pairs, and basically any object that is comparable.
 
-As is to be mentioned in the "Results" section, our method is to be compared with the best open-source (most starred) Go's parallel sorting. The primary testing of our implementations was carried out on the AFS UNIX machines (Intel Xeon E5-2680 v2), which have 20 cores and are 2-way hyperthreaded. 
+As is to be mentioned in the "Results" section, our method is to be compared with the best open-source Go's parallel sorting. The primary testing of our implementations was carried out on the AFS UNIX machines (Intel Xeon E5-2680 v2), which have 20 cores and are 2-way hyperthreaded. 
 
 ### QoSort.Quicksort
 
@@ -215,7 +215,68 @@ After the transpose step, we have the array partitioned into similar sized bucke
 
 ##### Improvement Over QuickSort
 
-Following the implementation specifications above, we were able to address many of the issues we identified with our parallel quicksort algorithm. One problem we had with quicksort was with pivot selection and load balancing. Although we were able to optimize this aspect using split-by-3 technique, there are still space for for improvement. In samplesort, we are able to sample on a large sample set and make more intelligent selection of pivots. In this way, we can partition the array into more smaller chunks of similar size, which is essential in load balancing. Moreover, sample sort is even better suited for adapting parallel computation by design. Most of the operations, especially the block-bucket transpose step, consists of many independent small tasks, which is perfect for utilizing our high core-count CPU architecture. This design also allow us to utiliza more cores earlier in the process, as a problem we had with previous iterations is that core utilization is low in early stages of quicksort. 
-
+Following the implementation specifications above, we were able to address many of the issues we identified with our parallel quicksort algorithm. One problem we had with quicksort was with pivot selection and load balancing. Although we were able to optimize this aspect using split-by-3 technique, there are still space for for improvement. In samplesort, we are able to sample on a large sample set and make more intelligent selection of pivots. In this way, we can partition the array into more smaller chunks of similar size, which is essential in load balancing. Moreover, sample sort is even better suited for adapting parallel computation by design. Most of the operations, especially the block-bucket transpose step, consists of many independent small tasks, which is perfect for utilizing our high core-count CPU architecture. This design also allow us to utilize more cores earlier in the process, as a problem we had with previous iterations is that core utilization is low in early stages of quicksort. 
 
 ## IV. Performance and Results
+
+#### Test Setting
+
+Our testing and experiments were carried out on the AFS UNIX machines (Intel Xeon E5-2680), each supplying 20 cores and is 2-way hyperthreaded. The UNIX machines run Golang with version 1.4.2, which provides multi-threading goroutine support.
+
+In order to test the elasticity of our program to different levels of data size, we did the experiments both for 1 million float64-key-value pairs (so 128M bits) as well as 100 million float64-key-value pairs (so 12.8G bits). 
+
+We believe these numbers are reasonable to be counted as "large-scale", since most of the publications on parallel sorting use arrays of sizes well below this line--- even if they use GPU for sorting (e.g. [3]).
+
+#### 1M float64-pairs Sorting
+
+We cross-compare the results of our QoSort library with: (1) Go's built-in sort; and (2) the most popular generic type parallel sort in Go that we found online. Note that this open-source external code for sorting is generic in data type but not data structure: **it assumes inputs of type `[]elem`, which is weaker than our requirement of `sort.Interface`**. 
+
+Here are the results, with performance measured in the time of completing the sort (we take the best out of 8 times):
+
+<div class="imgcap">
+<img src="/QoSort/assets/images/1M.png" style="width: 60%">
+<div class="thecap" style="color: white; font-size: 14pt">Figure 8: Comparison of sorting performances on 1M float64-pair data.</div>
+</div>
+
+<br />
+
+In general, we observed great speedup from existing Go's sorting library (leftmost blue). Moreover, even though the most popular open-source Go sort implementation we found relaxed the generic requirement (see bold face in the paragraph above), it is substantially slower than the optimized quicksort and samplesort. 
+
+#### 100M float64-pairs Sorting
+
+We conduct a similar experiment but with 100M float64-pairs. This is an even more important experiment than the previous one because 100M is truly pushing the boundary of large-scale sorting. The results are shown below:
+
+<div class="imgcap">
+<img src="/QoSort/assets/images/100M.png" style="width: 60%">
+<div class="thecap" style="color: white; font-size: 14pt">Figure 9: Comparison of sorting performances on 100M float64-pair data.</div>
+</div>
+
+<br />
+
+With large-scale data, the improvements from our optimizations are much more obvious. For example, parallel sorts clearly triumphs Go's builtin sorting methods. Moreover, as we optimize the quicksort methods (4 versions as highlighted in orange), eventually we are able to achieve a performance where the program can complete within 3.9 seconds (for split-by-3, and about 4.5 seconds for split-by-2). Sample sort algorithm, moreover, achieved even better result (rightmost bar), only ~2.0 - 2.2 seconds. This is expected, since as discussed above, sample sort offers better parallelization of the tasks, with better resource management (through blocks and buckets) as well as spatial locality (in the transpose phase).
+
+Both our optimized quicksort and samplesort defeated Go's existing most popular sorting extension, which needed around 7.2 seconds for the sorting. Moreover, it is important to note that this open-source implementation relaxed the input type requirement such that it is now an array of generic data type instead of `sort.Interface`.  **Out of curiosity, we tried to relax our requirement to the same degree, and got another 1.5x speedup.**
+
+Based on this result, we consider our implementation relatively successful!
+
+#### Discussion
+
+In terms of large-scale sorting, the speedup is eventually bounded by computation (\\( O(n \log n) \\)). However, given the amount of data, how we deal with locality and scheduling can be really important as well (see the improvement from naive quicksort to optimized quicksort). 
+
+Because of the usage of `sort.Interface` , we cannot exactly measure the relative proportions of time spent in computation and memory access. However, through rough profiling of different regions of our code, the performance is more computation-bounded. To improve on this, a new sorting algorithm with potentially a constant factor fewer comparisons will have to be used. Nevertheless, most of the fast sorting algorithms rely on additional space for purposes like data copying (e.g. mergesort), which leads to higher overhead in data transfer. 
+
+Finally, we would like to re-iterate how important it is to support generic data inputs. Some of the great parallel sorting methods, such as radix sort, rely **heavily** on the underlying element type or data structure (for which array fetch by index is possible). However, we believe it is important to keep the interface contract set by Go's sorting library so that not only ints and floats, but also strings and classes, and be sorted via the same level of abstraction as well.
+
+This has been a rewarding journey where we had the chance to apply the lots of concepts and techniques  learned in 15-418 to real-world usage--- namely, building this library :-) We would like to thank Professor Kayvon for his teaching, and the dedicated TAs for their helps.
+
+
+
+## Reference
+
+[1] Median of three partitioning: http://algs4.cs.princeton.edu/23quicksort/
+
+[2] G.E. Blelloch, C.E. Leiserson, B.M. Maggs, C.G. Plaxton, S.J. Smith and M. Zagha. [An Experimental Analysis of Parallel Sorting Algorithms]https://www.cs.cmu.edu/afs/cs.cmu.edu/project/phrensy/pub/papers/BlellochLMPSZ94.pdf] (1998).
+
+[3] D. Božidar and T. Dobravec. [Comparison of parallel sorting algorithms](https://arxiv.org/ftp/arxiv/papers/1511/1511.03404.pdf) (2015).
+
+[4] V. Kale and E. Solomonik. [Parallel Sorting Pattern](http://parlab.eecs.berkeley.edu/wiki/_media/patterns/sortingpattern.pdf) (2010).
