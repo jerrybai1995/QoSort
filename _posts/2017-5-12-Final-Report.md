@@ -1,13 +1,13 @@
 ---
 layout: post
 title: Final Report
-description: A report on QoSort
+description: A complete report on QoSort
 image: assets/images/engineering.jpg
 ---
 
 ## I. Summary
 
-**QoSort** is a parallel, generic sorting library in Go. Importantly, our sorting methods are entirely consistent with the `sort.Interface` that Go's 'sort' library uses. Two methods that we've been focusing on optimizing are **quicksort** and **samplesort**. Through optimizations in terms of cache locality, thread scheduling and load balance, we are able to achieve encouraging results compared to not only Go's builtin sort, but also the best generic-type sorting method that we found online.
+**QoSort** is a *parallel*, *generic* sorting library in Go. Importantly, our sorting methods are entirely consistent with the `sort.Interface` that Go's 'sort' library uses. Two methods that we've been focusing on optimizing are **quicksort** and **samplesort**. Through optimizations in terms of cache locality, thread scheduling and load balance, we are able to achieve encouraging results compared to not only Go's builtin sort, but also the best generic-type sorting method that we found online.
 
 **UPDATE**: On May 12, we presented this project as one of the **finalists** in 15-418's parallel competition! Our slides can be found [here]({{ site.url }}/QoSort/assets/pdfs/qosort_slides.pdf). 
 
