@@ -267,6 +267,9 @@ Because of the usage of `sort.Interface` , we cannot exactly measure the relativ
 
 Finally, we would like to re-iterate how important it is to support generic data inputs. Some of the great parallel sorting methods, such as radix sort, rely **heavily** on the underlying element type or data structure (for which array fetch by index is possible). However, we believe it is important to keep the interface contract set by Go's sorting library so that not only ints and floats, but also strings and classes, and be sorted via the same level of abstraction as well.
 
+
+## V. Acknowledgement 
+
 This has been a rewarding journey where we had the chance to apply the lots of concepts and techniques  learned in 15-418 to real-world usage--- namely, building this library :-) We would like to thank Professor Kayvon for his teaching, and the dedicated TAs for their helps.
 
 
