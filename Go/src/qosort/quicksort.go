@@ -13,16 +13,16 @@ func QuickSort(A sort.Interface) {
 }
 
 // median_of_three moves the median of the three to the first memory location m1
-func median_of_three(data sort.Interface, m1, m0, m2 int) {
-	if data.Less(m1, m0) {
-		data.Swap(m1, m0)
+func median_of_three(A sort.Interface, m1, m0, m2 int) {
+	if A.Less(m1, m0) {
+		A.Swap(m1, m0)
 	}
-	// data[m0] <= data[m1]
-	if data.Less(m2, m1) {
-		data.Swap(m2, m1)
-		// data[m0] <= data[m2] && data[m1] < data[m2]
-		if data.Less(m1, m0) {
-			data.Swap(m1, m0)
+	// A[m0] <= A[m1]
+	if A.Less(m2, m1) {
+		A.Swap(m2, m1)
+		// A[m0] <= A[m2] && A[m1] < A[m2]
+		if A.Less(m1, m0) {
+			A.Swap(m1, m0)
 		}
 	}
 }
@@ -117,6 +117,7 @@ func split2(A sort.Interface, i int, j int) int {
 	// sort5(A, i, j)
 	m := i + (j - i)/2 // Written like this to avoid integer overflow.
 	if j - i > 80 {
+		// Sample on 15 data points
 		s := (j - i) / 8
 		r := (j - i) / 16
 		median_of_three(A, i, i+s, i+2*s)
